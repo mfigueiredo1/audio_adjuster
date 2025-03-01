@@ -11,6 +11,8 @@ class AudioApp(QWidget):
         super().__init__()
         self.settings()
         self.initUI()
+        self.event_handler()
+
 
     
 
@@ -76,13 +78,61 @@ class AudioApp(QWidget):
         self.master.addLayout(row)
         self.setLayout(self.master)
 
+        # Special Audio Classes from PyQt6
+        self.audio_output = QAudioOutput()
+        self.media_player = QMediaPlayer()
+        self.media_player.setAudioOutput(self.audio_output)
+
 
 
 
 
     # Event Handler
+    def event_handler(self):
+        self.slider.valueChanged.connect(self.update_slider)
+        self.btn_open.clicked.connect(self.open_file)
+        self.btn_play.clicked.connect(self.play_audio)
+
+    # Change slider speed label
+    def update_slider(self):
+        speed = self.slider.value() / 100
+        self.slider_text.setText(f"Speed: {speed:.2f}x")
 
         
+
+    def open_file(self):
+        path = QFileDialog.getExistingDirectory(self, "Open Directory")
+
+        if path:
+            self.file_list.clear()
+            for file_name in os.listdir(path):
+                if file_name.endswith(".mp3"):
+                    self.file_list.addItem(file_name)
+        else:
+            file, _ = QFileDialog.getOpenFileName(self, "Select File", filter="Audio Files (*.mp3 )")
+            if file:
+                self.file_list.clear()
+                self.file_list.addItem(os.path.basename(file))
+
+
+    
+    # Play the audio file
+    def play_audio(self):
+        if self.file_list.selectedItems():
+            file_name = self.file_list.selectedItems()[0].text()
+            folder_path = QFileDialog.getExistingDirectory(self, "Select Folder")
+            file_path = os.path.join(folder_path, file_name)
+            file_url = QUrl.fromLocalFile(file_path)
+
+            self.media_player.setSource(file_url)
+            self.media_player.setPlaybackRate(self.slider.value() / 100.0)
+            self.media_player.play()
+
+
+            self.btn_pause.setEnabled(True)
+            self.btn_resume.setDisabled(True)
+            self.btn_reset.setEnabled(True)
+            self.btn_play.setDisabled(True)
 
 
 # Boilerplate code
