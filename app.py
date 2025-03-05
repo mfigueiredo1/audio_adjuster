@@ -70,6 +70,7 @@ class AudioApp(QWidget):
         col2.addWidget(self.btn_open)
         col2.addWidget(self.btn_play)
         col2.addWidget(self.btn_pause)
+        col2.addWidget(self.btn_resume)
         col2.addWidget(self.btn_reset)
 
         row.addLayout(col1)
@@ -92,6 +93,9 @@ class AudioApp(QWidget):
         self.slider.valueChanged.connect(self.update_slider)
         self.btn_open.clicked.connect(self.open_file)
         self.btn_play.clicked.connect(self.play_audio)
+        self.btn_pause.clicked.connect(self.pause_audio)
+        self.btn_resume.clicked.connect(self.resume_audio)
+        self.btn_reset.clicked.connect(self.reset_audio)
 
     # Change slider speed label
     def update_slider(self):
@@ -133,6 +137,31 @@ class AudioApp(QWidget):
             self.btn_resume.setDisabled(True)
             self.btn_reset.setEnabled(True)
             self.btn_play.setDisabled(True)
+
+    def pause_audio(self):
+        self.media_player.pause()
+        self.btn_pause.setDisabled(True)
+        self.btn_resume.setEnabled(True)
+    
+    def resume_audio(self):
+        self.media_player.play()
+        self.btn_pause.setEnabled(True)
+        self.btn_resume.setDisabled(True)
+
+    def reset_audio(self):
+        if self.media_player.isPlaying():
+            self.media_player.stop()
+
+        self.media_player.setPosition(0)
+        self.media_player.setPlaybackRate(self.slider.value() / 100.0)
+        self.media_player.play()
+
+        self.btn_pause.setEnabled(True)
+        self.btn_resume.setDisabled(True)
+        self.btn_reset.setDisabled(True)
+        self.btn_play.setDisabled(True)
+
+        QTimer.singleShot(100, lambda: self.btn_play.setEnabled(True))
 
 
 # Boilerplate code
