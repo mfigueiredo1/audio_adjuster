@@ -28,6 +28,9 @@ class AudioApp(QWidget):
     # Design
     def initUI(self):
         self.title = QLabel("Audio Adjuster")
+        self.title.setObjectName("title")
+        self.title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
         self.file_list = QListWidget()
         self.btn_open = QPushButton("Choose a file") 
         self.btn_play = QPushButton("Play")
@@ -79,10 +82,49 @@ class AudioApp(QWidget):
         self.master.addLayout(row)
         self.setLayout(self.master)
 
+        self.style()
+
         # Special Audio Classes from PyQt6
         self.audio_output = QAudioOutput()
         self.media_player = QMediaPlayer()
         self.media_player.setAudioOutput(self.audio_output)
+    
+    def style(self):
+        self.setStyleSheet("""
+                           QWidget{
+                                background-color: #F9DBBA;
+                           }
+
+                           QPushButton{
+                                background-color:#5BB9C2;
+                                padding: 15px;
+                                border-radius: 9px;
+                                color: #333;
+                           } 
+
+                           QPushButton:hover{
+                                background-color: #1A4870;
+                                color: #F9DBBA;
+                           }
+
+                           QLabel{
+                                color: #333;
+                           }
+
+                           #title{
+                                font-family: Papyrus;
+                                font-size: 40px;
+                           }
+
+                           QSlider{
+                                margin-right: 15px;
+                           }
+
+                           QListWidget{
+                                color: #333;
+                           }
+                           """)
+        
 
 
 
@@ -161,7 +203,7 @@ class AudioApp(QWidget):
         self.btn_reset.setDisabled(True)
         self.btn_play.setDisabled(True)
 
-        QTimer.singleShot(100, lambda: self.btn_play.setEnabled(True))
+        QTimer.singleShot(100, lambda: self.btn_reset.setEnabled(True))
 
 
 # Boilerplate code
